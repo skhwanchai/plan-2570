@@ -125,6 +125,17 @@ footer{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;j
   .scorehead{flex-direction:column;align-items:flex-start}
   .date{width:56px}
 }
+.sched{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:700px){.sched{grid-template-columns:1fr}}
+.day{border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.day.today{border-color:var(--blue);background:var(--blue-bg)}
+.day h4{margin:0 0 6px;font-size:13px;font-weight:600;color:var(--ink2);display:flex;justify-content:space-between}
+.day.today h4{color:var(--blue)}
+.cls{padding:8px 0;border-top:1px solid var(--line)}
+.day.today .cls{border-color:#cfe2f8}
+.cls:first-of-type{border-top:0}
+.cls b{font-size:15px}
+.cls .tm{font-variant-numeric:tabular-nums;font-weight:500}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;transition:all .25s;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%)}
 </style>
@@ -164,6 +175,12 @@ footer{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;j
       <div class="small muted" id="doneNote"></div>
     </div>
   </div>
+
+  <section class="card">
+    <div class="card-h"><h2>ตารางสอน 2/2569</h2><span class="pill green" id="loadPill"></span></div>
+    <div class="sched" id="sched"></div>
+    <div class="small muted" id="nextClass" style="margin-top:12px"></div>
+  </section>
 
   <section class="grid two">
     <div class="card">
@@ -226,9 +243,11 @@ const ITEMS = [
   {id:"evidence-folder", type:"task", title:"สร้างโฟลเดอร์หลักฐานแยกตามข้อประเมิน 1.1–6", start:"2026-11-24", due:"2026-11-30", round:1, tag:"ทั่วไป"},
   {id:"roster", type:"task", title:"พิมพ์รายชื่อนักศึกษาจาก reg.ssru.ac.th", start:"2026-11-28", due:"2026-12-01", round:1, tag:"สอน"},
   {id:"grant-check", type:"task", title:"เช็กสัญญาทุนวิจัยที่มีชื่อเป็นหัวหน้าโครงการ", start:"2026-11-24", due:"2026-12-31", round:1, tag:"2.1"},
-  {id:"open-2-69", type:"event", title:"เปิดภาคเรียน 2/2569 (ภาคปกติ)", start:"2026-12-01", round:1, tag:"สอน"},
-  {id:"open-2-69s", type:"event", title:"เปิดภาคเรียน ภาคพิเศษ (ส.-อา.)", start:"2026-12-06", round:1, tag:"สอน"},
-  {id:"pretest", type:"task", title:"ปฐมนิเทศรายวิชาและเก็บ Pre-test ครบทุกกลุ่ม", start:"2026-12-01", due:"2026-12-13", round:1, tag:"1.2"},
+  {id:"open-2-69", type:"event", title:"เปิดภาคเรียน 2/2569", start:"2026-12-01", round:1, tag:"สอน"},
+  {id:"pretest", type:"task", title:"ปฐมนิเทศรายวิชาและเก็บ Pre-test ครบทุกกลุ่ม", start:"2026-12-01", due:"2026-12-03", round:1, tag:"1.2", note:"อ. 1 ธ.ค. GMD3313 · พ. 2 ธ.ค. DES1104 · พฤ. 3 ธ.ค. GMD2104 (001, 002)"},
+  {id:"hol-1210", type:"event", title:"วันหยุดวันรัฐธรรมนูญ — งดสอน GMD2104 ทั้ง 2 กลุ่ม", start:"2026-12-10", round:1, tag:"สอน"},
+  {id:"hol-1231", type:"event", title:"วันหยุดสิ้นปี — งดสอน GMD2104 ทั้ง 2 กลุ่ม", start:"2026-12-31", round:1, tag:"สอน"},
+  {id:"makeup-plan", type:"task", title:"นัดสอนชดเชย GMD2104 กลุ่ม 001, 002 (หายไป 2 คาบจากวันหยุด)", start:"2027-02-01", due:"2027-03-12", round:1, tag:"สอน", note:"ช่วงสอนชดเชยของมหาวิทยาลัย 22–26, 29 มี.ค. — ตรวจประกาศวันหยุดของมหาวิทยาลัยอีกครั้ง"},
   {id:"od-first", type:"task", title:"อัดคลิป On demand บทแรก ๆ ทุกวิชา", start:"2026-12-01", due:"2026-12-20", round:1, tag:"1.4"},
   {id:"lessons", type:"task", title:"ทำแผนการสอนรายบท + เอกสารบรรยาย ล่วงหน้าบทละ 1 สัปดาห์", start:"2026-12-01", due:"2027-03-19", round:1, tag:"1.2", note:"งานต่อเนื่องทั้งเทอม", ics:false},
   {id:"adddrop", type:"event", title:"วันสุดท้ายนักศึกษาลงทะเบียน/เพิ่ม-ถอนรายวิชา", start:"2027-01-04", round:1, tag:"1.1"},
@@ -238,13 +257,11 @@ const ITEMS = [
   {id:"tci", type:"task", title:"เขียนบทความ TCI 1 เรื่อง (First / Corresponding author)", start:"2027-02-01", due:"2027-02-28", round:1, tag:"2.2"},
   {id:"eval-remind", type:"task", title:"เตือนนักศึกษาประเมินอาจารย์ในคาบ (เปิด 1–31 มี.ค.)", start:"2027-03-01", due:"2027-03-31", round:1, tag:"1.5"},
   {id:"igrade", type:"event", title:"วันสุดท้ายส่งแก้เกรด I ของเทอม 1/2569", start:"2027-03-04", round:1, tag:"สอน"},
-  {id:"posttest", type:"task", title:"ทำ Post-test คาบสุดท้ายทุกกลุ่ม", start:"2027-03-08", due:"2027-03-19", round:1, tag:"1.2"},
-  {id:"last-s", type:"event", title:"สอนวันสุดท้าย ภาคพิเศษ (ส.-อา.)", start:"2027-03-14", round:1, tag:"สอน"},
-  {id:"last", type:"event", title:"สอนวันสุดท้าย ภาคปกติ", start:"2027-03-19", round:1, tag:"สอน"},
-  {id:"makeup", type:"event", title:"ช่วงสอนชดเชย (พิเศษ 20–21 / ปกติ 22–26, 29 มี.ค.)", start:"2027-03-20", end:"2027-03-29", round:1, tag:"สอน"},
-  {id:"final-s", type:"event", title:"สอบปลายภาค ภาคพิเศษ", start:"2027-03-27", round:1, tag:"สอน"},
+  {id:"posttest", type:"task", title:"ทำ Post-test คาบสุดท้ายทุกกลุ่ม", start:"2027-03-16", due:"2027-03-18", round:1, tag:"1.2", note:"อ. 16 มี.ค. GMD3313 · พ. 17 มี.ค. DES1104 · พฤ. 18 มี.ค. GMD2104 (001, 002)"},
+  {id:"last", type:"event", title:"วันสุดท้ายของการเรียนการสอน", start:"2027-03-19", round:1, tag:"สอน"},
+  {id:"makeup", type:"event", title:"ช่วงสอนชดเชย (22–26, 29 มี.ค.)", start:"2027-03-22", end:"2027-03-29", round:1, tag:"สอน"},
   {id:"load-1-70", type:"task", title:"ล็อกตารางสอนเทอม 1/2570 ให้ได้ ≥12 ชม.", start:"2027-03-01", due:"2027-03-31", round:1, tag:"1.1", note:"คณะบันทึกตารางเรียนวันสุดท้าย 31 มี.ค."},
-  {id:"final", type:"event", title:"สอบปลายภาค ภาคปกติ", start:"2027-03-30", end:"2027-04-01", round:1, tag:"สอน"},
+  {id:"final", type:"event", title:"สอบปลายภาค", start:"2027-03-30", end:"2027-04-01", round:1, tag:"สอน"},
   {id:"grades", type:"task", title:"ส่งเกรดและออกรายงานที่ reg.ssru.ac.th", start:"2027-04-01", due:"2027-04-08", round:1, tag:"สอน"},
   {id:"close-2-69", type:"event", title:"ปิดภาคเรียน 2/2569", start:"2027-04-09", round:1, tag:"สอน"},
   {id:"compile", type:"task", title:"รวมเล่มเอกสารประกอบการสอน: ปก คำนำ สารบัญ บรรณานุกรม", start:"2027-04-09", due:"2027-04-30", round:1, tag:"1.2"},
@@ -256,7 +273,21 @@ const ITEMS = [
   {id:"act-king", type:"event", title:"กิจกรรมบังคับ: พิธีถวายพระพรชัยมงคล พระบาทสมเด็จพระเจ้าอยู่หัว", start:"2027-07-28", round:2, tag:"4", note:"วันจัดจริงอาจขยับ ตรวจกับประกาศมหาวิทยาลัย"},
   {id:"evidence-r2", type:"task", title:"รวบรวมหลักฐานรอบ 2 ส่งคณะ", start:"2027-09-01", due:"2027-09-30", round:2, tag:"ทั่วไป"}
 ];
-const SEM = {open:"2026-12-01", end:"2027-04-01"};
+const SEM = {open:"2026-12-01", end:"2027-04-01", lastClass:"2027-03-19"};
+/* ตารางสอน 2/2569 (d: 0=อา. 1=จ. 2=อ. 3=พ. 4=พฤ. 5=ศ. 6=ส.) */
+const SCHEDULE = [
+  {d:2, code:"GMD3313", sec:"001", name:"ความคิดสร้างสรรค์ในการออกแบบสื่อกราฟิก", from:"08:00", to:"12:00", room:"42/4244", batch:"รุ่น 67"},
+  {d:3, code:"DES1104", sec:"003", name:"พื้นฐานคอมพิวเตอร์เพื่อการออกแบบ", from:"08:00", to:"12:00", room:"42/4222", batch:"รุ่น 69"},
+  {d:4, code:"GMD2104", sec:"001", name:"การออกแบบและจัดวางตัวอักษร", from:"08:00", to:"12:00", room:"42/4243", batch:"รุ่น 68"},
+  {d:4, code:"GMD2104", sec:"002", name:"การออกแบบและจัดวางตัวอักษร", from:"13:00", to:"17:00", room:"42/4243", batch:"รุ่น 68"}
+];
+const LOAD_HRS = 16;
+const HOLIDAYS = {"2026-12-07":"ชดเชยวันพ่อ","2026-12-10":"วันรัฐธรรมนูญ","2026-12-31":"วันสิ้นปี","2027-01-01":"วันขึ้นปีใหม่"};
+const SEED_COURSES = [
+  {code:"DES1104", name:"พื้นฐานคอมพิวเตอร์เพื่อการออกแบบ · กลุ่ม 003"},
+  {code:"GMD2104", name:"การออกแบบและจัดวางตัวอักษร · กลุ่ม 001, 002"},
+  {code:"GMD3313", name:"ความคิดสร้างสรรค์ในการออกแบบสื่อกราฟิก · กลุ่ม 001"}
+];
 const COMPONENTS = [
   ["cover","ปก คำนำ สารบัญ"],["planC","แผนบริหาร<br>รายวิชา"],["planL","แผนบริหาร<br>รายบท"],["lesson","บทเรียน"],
   ["biblio","บรรณานุกรม"],["slides","เอกสาร<br>บรรยาย"],["orient","ปฐมนิเทศ<br>รายวิชา"],["pre","Pre-test"],["post","Post-test"]
@@ -270,6 +301,12 @@ const blank = {done:{}, courses:[], s:{load:"",book:false,eval:"",grant:{},pub1:
 let S;
 try{ S = Object.assign(structuredClone(blank), JSON.parse(localStorage.getItem(KEY)||"{}")); S.s = Object.assign(structuredClone(blank.s), S.s||{}); }catch(e){ S = structuredClone(blank); }
 const save = ()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
+if(!S.seed2_69){
+  if(!S.courses.length) S.courses = SEED_COURSES.map((c,i)=>({id:"seed"+i, code:c.code, name:c.name, c:{}}));
+  S.done["load-2-69"] = true;
+  if(!S.s.load) S.s.load = "10";
+  S.seed2_69 = true; save();
+}
 
 /* ========= date helpers ========= */
 const D = s => { const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); };
@@ -339,11 +376,33 @@ function render(){
   if(urgent.length){ bn.classList.add("show"); document.getElementById("bannerText").innerHTML = `<div>ต้องรีบ ${urgent.length} งาน</div><div class="small" style="font-weight:400">${urgent.map(u=>esc(u.title)).join(" · ")}</div>`; }
   else bn.classList.remove("show");
 
-  renderTimeline(t); renderCourses(); renderScore();
+  renderSchedule(t); renderTimeline(t); renderCourses(); renderScore();
 }
 function setTxt(id,v){ document.getElementById(id).textContent=v; }
 function bar(id,p){ document.getElementById(id).style.width=Math.max(0,Math.min(100,p))+"%"; }
 
+const DAYN=["อาทิตย์","จันทร์","อังคาร","พุธ","พฤหัสบดี","ศุกร์","เสาร์"];
+function renderSchedule(t){
+  setTxt("loadPill", `${LOAD_HRS} ชม./สัปดาห์ · ข้อ 1.1 ผ่าน`);
+  const inSem = t>=D(SEM.open) && t<=D(SEM.lastClass);
+  const hol = HOLIDAYS[iso(t)];
+  const days=[...new Set(SCHEDULE.map(c=>c.d))];
+  document.getElementById("sched").innerHTML = days.map(d=>{
+    const isToday = inSem && t.getDay()===d;
+    return `<div class="day ${isToday?"today":""}"><h4><span>${DAYN[d]}</span>${isToday?`<span>${hol?"วันหยุด: "+hol:"วันนี้"}</span>`:""}</h4>${SCHEDULE.filter(c=>c.d===d).map(c=>`<div class="cls"><div><span class="tm">${c.from}–${c.to}</span> · <b>${c.code}</b> <span class="muted">กลุ่ม ${c.sec}</span></div><div class="small">${esc(c.name)}</div><div class="small muted">ห้อง ${c.room} · ${c.batch}</div></div>`).join("")}</div>`;
+  }).join("");
+  // next class
+  const now=new Date(); let found=null;
+  for(let i=0;i<120 && !found;i++){
+    const day=new Date(t); day.setDate(t.getDate()+i);
+    if(day<D(SEM.open) || day>D(SEM.lastClass) || HOLIDAYS[iso(day)]) continue;
+    for(const c of SCHEDULE.filter(x=>x.d===day.getDay()).sort((a,b)=>a.from.localeCompare(b.from))){
+      const [h,m]=c.to.split(":").map(Number); const endT=new Date(day); endT.setHours(h,m);
+      if(endT>now){ found={c,day}; break; }
+    }
+  }
+  setTxt("nextClass", found ? `คาบถัดไป: ${found.day.toLocaleDateString("th-TH",{weekday:"short",day:"numeric",month:"short"})} ${found.c.from} · ${found.c.code} กลุ่ม ${found.c.sec} · ห้อง ${found.c.room}` : "ไม่มีคาบสอนแล้วในภาคเรียนนี้");
+}
 function renderTimeline(t){
   let list=[...ITEMS].sort((a,b)=>D(a.start)-D(b.start));
   if(filter==="upcoming") list=list.filter(it=>!["past","done"].includes(status(it,t)));
