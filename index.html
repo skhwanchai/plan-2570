@@ -136,6 +136,31 @@ footer{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;j
 .cls:first-of-type{border-top:0}
 .cls b{font-size:15px}
 .cls .tm{font-variant-numeric:tabular-nums;font-weight:500}
+/* ===== urgency highlight ===== */
+.item.urg{border-radius:14px;margin:6px -12px;padding:12px;border-top-color:transparent;position:relative}
+.item.urg + .item{border-top-color:transparent}
+.item.urg-warm{background:linear-gradient(90deg,#fff1d6,#fff8ec 55%,#fff);box-shadow:inset 4px 0 0 #ff9f0a}
+.item.urg-hot{background:linear-gradient(100deg,#ffe1dc,#fff0e0 50%,#fff);box-shadow:inset 4px 0 0 #ff3b30;animation:hotpulse 1.8s ease-in-out infinite}
+.item.urg-over{background:repeating-linear-gradient(135deg,#ffe3e6 0 12px,#ffeef0 12px 24px);box-shadow:inset 4px 0 0 #d70015;animation:hotpulse 1.1s ease-in-out infinite}
+@keyframes hotpulse{0%,100%{box-shadow:inset 4px 0 0 #ff3b30,0 0 0 0 rgba(255,59,48,0)}50%{box-shadow:inset 4px 0 0 #ff3b30,0 0 0 5px rgba(255,59,48,.16)}}
+.fire{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:3px 10px 3px 7px;border-radius:99px;color:#fff;background:linear-gradient(90deg,#ff3b30,#ff9500,#ff3b30);background-size:200% 100%;animation:slide 2.2s linear infinite;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fire svg{width:13px;height:13px;animation:flick .5s ease-in-out infinite alternate}
+.fire.over{background:linear-gradient(90deg,#b0000f,#ff2d55,#b0000f);background-size:200% 100%}
+.warmpill{font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px;background:#ff9f0a;color:#fff;white-space:nowrap}
+@keyframes slide{to{background-position:-200% 0}}
+@keyframes flick{from{transform:scale(1) rotate(-6deg)}to{transform:scale(1.18) rotate(6deg)}}
+.item.urg-over .t,.item.urg-hot .t{font-weight:600}
+.shake{display:inline-block;animation:shake 2.4s ease-in-out infinite}
+@keyframes shake{0%,86%,100%{transform:none}88%{transform:translateX(-3px) rotate(-2deg)}90%{transform:translateX(3px) rotate(2deg)}92%{transform:translateX(-2px)}94%{transform:translateX(2px)}}
+/* hero next-deadline card when hot */
+.card.hot{color:#fff;background:linear-gradient(120deg,#ff3b30,#ff6a00,#ff2d55,#ff3b30);background-size:300% 300%;animation:heat 6s ease infinite;box-shadow:0 10px 30px rgba(255,59,48,.35)}
+.card.hot .muted{color:rgba(255,255,255,.85)}
+.card.warm{background:linear-gradient(135deg,#fff3dc,#fff);box-shadow:inset 0 0 0 2px #ff9f0a}
+@keyframes heat{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.clock{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:5px 12px;border-radius:99px;background:rgba(0,0,0,.22);font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.clock svg{width:15px;height:15px}
+.card.warm .clock{background:#ff9f0a;color:#fff}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;transition:all .25s;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%)}
 </style>
@@ -162,11 +187,12 @@ footer{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;j
       <div class="bar"><i id="semBar"></i></div>
       <div class="small muted" id="semNote"></div>
     </div>
-    <div class="card">
-      <div class="muted small">กำหนดถัดไป</div>
+    <div class="card" id="nextCard">
+      <div class="muted small" id="nextLabel">กำหนดถัดไป</div>
       <div style="display:flex;align-items:baseline;gap:10px;margin-top:8px"><span class="big" id="nextBig"></span><span class="muted" id="nextUnit"></span></div>
       <div style="margin-top:12px;font-weight:500" id="nextTitle"></div>
       <div class="small muted" id="nextDate"></div>
+      <div id="nextClock"></div>
     </div>
     <div class="card">
       <div class="muted small">งานในรายการ</div>
@@ -328,17 +354,39 @@ function status(it,t){
 const STAT = {done:["green","เสร็จแล้ว"],overdue:["red","เลยกำหนด"],active:["blue","ช่วงนี้"],soon:["amber","ใกล้ถึง"],later:["","รอ"],past:["","ผ่านแล้ว"]};
 const calIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
 
+const FLAME='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s1 3.5-1.5 6.5C8.3 11.2 7 12.8 7 15a5 5 0 0 0 10 0c0-1.8-.8-3.2-1.6-4.3-.3 1.4-1.1 2.3-2.1 2.6.6-2.6.2-6.6-1.3-11.3z"/></svg>';
+const CLOCK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>';
+function urgency(it,t){
+  if(it.type!=="task" || S.done[it.id]) { if(it.type==="event"){ const sd=days(t,D(it.start)); const ed=days(t,D(it.end||it.start)); if(sd<=0&&ed>=0) return "warm"; if(sd>0&&sd<=2) return "warm"; } return ""; }
+  if(D(it.start)>t && days(t,D(it.start))>7) return "";
+  const left=days(t,D(it.due));
+  if(left<0) return "over";
+  if(left<=3) return "hot";
+  if(left<=7) return "warm";
+  return "";
+}
+const deadlineOf = it => { const d=D(it.due); d.setHours(23,59,59); return d; };
+function cdText(ms){
+  if(ms<=0) return "หมดเวลา";
+  const sec=Math.floor(ms/1000), dd=Math.floor(sec/86400), h=Math.floor(sec%86400/3600), m=Math.floor(sec%3600/60), ss=sec%60;
+  const p=n=>String(n).padStart(2,"0");
+  return (dd? dd+" วัน ":"")+`${p(h)}:${p(m)}:${p(ss)}`;
+}
 function itemHTML(it,t,withDate){
   const st=status(it,t), [c,l]=STAT[st];
+  const u=urgency(it,t);
   let when="";
   const e=D(it.due||it.end||it.start);
-  if(st==="overdue") when=`<span class="pill red">เลยมา ${days(e,t)} วัน</span>`;
+  if(u==="over") when=`<span class="fire over shake">${FLAME}เลยกำหนด ${days(e,t)} วัน</span>`;
+  else if(u==="hot") when=`<span class="fire">${FLAME}<span class="cd" data-due="${it.due}">${cdText(deadlineOf(it)-new Date())}</span></span>`;
+  else if(u==="warm" && it.type==="task" && st==="active") when=`<span class="warmpill">เหลือ ${days(t,e)} วัน</span>`;
+  else if(st==="overdue") when=`<span class="pill red">เลยมา ${days(e,t)} วัน</span>`;
   else if(st==="active" && it.type==="task"){ const n=days(t,e); when=`<span class="pill ${n<=3?"red":"blue"}">${n===0?"ครบกำหนดวันนี้":"เหลือ "+n+" วัน"}</span>`; }
   else if(st==="active") when=`<span class="pill blue">วันนี้/ช่วงนี้</span>`;
   else if(st==="soon"){ const n=days(t,D(it.start)); when=`<span class="pill amber">อีก ${n} วัน</span>`; }
   else if(st==="done") when=`<span class="pill green">เสร็จแล้ว</span>`;
   const lead = it.type==="task" ? `<input type="checkbox" class="chk" data-id="${it.id}" ${S.done[it.id]?"checked":""} aria-label="เสร็จแล้ว">` : `<span class="dot">${calIcon}</span>`;
-  return `<div class="item ${st==="done"?"done":""}">${withDate?`<div class="date">${fmt(it.start)}</div>`:""}${lead}<div style="flex:1;min-width:0"><div class="t">${esc(it.title)}</div><div class="meta">${when}<span class="pill">${fmtR(it)}</span><span class="pill">ข้อ ${esc(it.tag)}</span></div>${it.note?`<div class="note">${esc(it.note)}</div>`:""}</div></div>`;
+  return `<div class="item ${st==="done"?"done":""} ${u?"urg urg-"+u:""}">${withDate?`<div class="date">${fmt(it.start)}</div>`:""}${lead}<div style="flex:1;min-width:0"><div class="t">${esc(it.title)}</div><div class="meta">${when}<span class="pill">${fmtR(it)}</span><span class="pill">ข้อ ${esc(it.tag)}</span></div>${it.note?`<div class="note">${esc(it.note)}</div>`:""}</div></div>`;
 }
 
 /* ========= render ========= */
@@ -355,8 +403,13 @@ function render(){
 
   // next deadline (task not done or event) from today
   const upcoming = ITEMS.filter(it=>!(it.type==="task"&&S.done[it.id])).map(it=>({it,d:D(it.type==="task"?it.due:it.start)})).filter(x=>x.d>=t).sort((a,b)=>a.d-b.d);
-  if(upcoming.length){ const n=upcoming[0]; const dd=days(t,n.d); setTxt("nextBig",dd===0?"วันนี้":dd); setTxt("nextUnit",dd===0?"":"วัน"); setTxt("nextTitle",n.it.title); setTxt("nextDate",(n.it.type==="task"?"ครบกำหนด ":"")+fmt(iso(n.d),{weekday:"short",day:"numeric",month:"long"})); }
+  const nc=document.getElementById("nextCard"); nc.classList.remove("hot","warm"); document.getElementById("nextClock").innerHTML="";
+  const overdueT = ITEMS.filter(it=>it.type==="task"&&!S.done[it.id]&&D(it.due)<t).sort((a,b)=>D(a.due)-D(b.due));
+  if(upcoming.length){ const n=upcoming[0]; const dd=days(t,n.d);
+    if(n.it.type==="task" && dd<=3){ nc.classList.add("hot"); document.getElementById("nextClock").innerHTML=`<span class="clock">${CLOCK}<span class="cd" data-due="${n.it.due}">${cdText(deadlineOf(n.it)-new Date())}</span></span>`; }
+    else if(n.it.type==="task" && dd<=7){ nc.classList.add("warm"); document.getElementById("nextClock").innerHTML=`<span class="clock">${CLOCK}<span class="cd" data-due="${n.it.due}">${cdText(deadlineOf(n.it)-new Date())}</span></span>`; } setTxt("nextBig",dd===0?"วันนี้":dd); setTxt("nextUnit",dd===0?"":"วัน"); setTxt("nextTitle",n.it.title); setTxt("nextDate",(n.it.type==="task"?"ครบกำหนด ":"")+fmt(iso(n.d),{weekday:"short",day:"numeric",month:"long"})); }
   else { setTxt("nextBig","—"); setTxt("nextUnit",""); setTxt("nextTitle","ไม่มีกำหนดค้าง"); setTxt("nextDate",""); }
+  setTxt("nextLabel", overdueT.length ? `กำหนดถัดไป · เลยกำหนดค้างอยู่ ${overdueT.length} งาน` : "กำหนดถัดไป");
 
   // tasks done
   const tasks=ITEMS.filter(i=>i.type==="task"), dn=tasks.filter(i=>S.done[i.id]).length;
@@ -401,7 +454,8 @@ function renderSchedule(t){
       if(endT>now){ found={c,day}; break; }
     }
   }
-  setTxt("nextClass", found ? `คาบถัดไป: ${found.day.toLocaleDateString("th-TH",{weekday:"short",day:"numeric",month:"short"})} ${found.c.from} · ${found.c.code} กลุ่ม ${found.c.sec} · ห้อง ${found.c.room}` : "ไม่มีคาบสอนแล้วในภาคเรียนนี้");
+  let live=false; if(found){ const [h,m]=found.c.from.split(":").map(Number); const st=new Date(found.day); st.setHours(h,m); live = st<=now; }
+  setTxt("nextClass", found ? `${live?"กำลังสอน":"คาบถัดไป"}: ${found.day.toLocaleDateString("th-TH",{weekday:"short",day:"numeric",month:"short"})} ${found.c.from} · ${found.c.code} กลุ่ม ${found.c.sec} · ห้อง ${found.c.room}` : "ไม่มีคาบสอนแล้วในภาคเรียนนี้");
 }
 function renderTimeline(t){
   let list=[...ITEMS].sort((a,b)=>D(a.start)-D(b.start));
@@ -568,6 +622,7 @@ document.getElementById("fileImport").onchange=async e=>{
 function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"),2800); }
 
 /* ========= auto refresh ========= */
+setInterval(()=>{ const now=new Date(); document.querySelectorAll(".cd").forEach(el=>{ const d=D(el.dataset.due); d.setHours(23,59,59); el.textContent=cdText(d-now); }); },1000);
 let lastDay=iso(today0());
 setInterval(()=>{ const d=iso(today0()); if(d!==lastDay){ lastDay=d; render(); maybeNotify(); } },60*1000);
 document.addEventListener("visibilitychange",()=>{ if(!document.hidden){ render(); maybeNotify(); } });
