@@ -37,7 +37,8 @@ h2{font-size:18px;margin:0;font-weight:600}
 .btn svg{width:16px;height:16px;flex:none}
 .grid{display:grid;gap:16px}
 .hero{grid-template-columns:1.2fr 1fr 1fr}
-@media(max-width:860px){.hero{grid-template-columns:1fr}}
+@media(max-width:860px){.hero{grid-template-columns:1fr 1fr}.hero #nextCard{grid-column:1/-1;order:-1}}
+@media(max-width:560px){.hero{grid-template-columns:1fr 1fr;gap:12px}.hero .big{font-size:36px}.hero .card{padding:16px}}
 .card{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
 .muted{color:var(--ink2)}
@@ -126,7 +127,12 @@ footer{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;j
   .date{width:56px}
 }
 .sched{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-@media(max-width:700px){.sched{grid-template-columns:1fr}}
+@media(max-width:700px){
+  .sched{display:flex;align-items:flex-start;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;margin:0 -18px;padding:0 18px 4px;scrollbar-width:none}
+  .sched::-webkit-scrollbar{display:none}
+  .day{flex:0 0 82%;scroll-snap-align:start}
+  .swipe-hint{display:block!important}
+}
 .day{border:1px solid var(--line);border-radius:14px;padding:12px 14px}
 .day.today{border-color:var(--blue);background:var(--blue-bg)}
 .day h4{margin:0 0 6px;font-size:13px;font-weight:600;color:var(--ink2);display:flex;justify-content:space-between}
@@ -205,6 +211,7 @@ footer{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;j
   <section class="card">
     <div class="card-h"><h2>ตารางสอน 2/2569</h2><span class="pill green" id="loadPill"></span></div>
     <div class="sched" id="sched"></div>
+    <div class="small muted swipe-hint" style="display:none;margin-top:8px">ปัดซ้าย-ขวาเพื่อดูวันอื่น</div>
     <div class="small muted" id="nextClass" style="margin-top:12px"></div>
   </section>
 
@@ -444,6 +451,8 @@ function renderSchedule(t){
     const isToday = inSem && t.getDay()===d;
     return `<div class="day ${isToday?"today":""}"><h4><span>${DAYN[d]}</span>${isToday?`<span>${hol?"วันหยุด: "+hol:"วันนี้"}</span>`:""}</h4>${SCHEDULE.filter(c=>c.d===d).map(c=>`<div class="cls"><div><span class="tm">${c.from}–${c.to}</span> · <b>${c.code}</b> <span class="muted">กลุ่ม ${c.sec}</span></div><div class="small">${esc(c.name)}</div><div class="small muted">ห้อง ${c.room} · ${c.batch}</div></div>`).join("")}</div>`;
   }).join("");
+  const tc=document.querySelector(".day.today"); const sc=document.getElementById("sched");
+  if(tc && sc.scrollWidth>sc.clientWidth){ sc.scrollLeft = tc.offsetLeft - sc.offsetLeft - 18; }
   // next class
   const now=new Date(); let found=null;
   for(let i=0;i<120 && !found;i++){
