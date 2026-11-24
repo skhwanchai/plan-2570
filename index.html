@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cut">
+<title>แผนงานอาจารย์ · ปีงบ 2570</title>
+<meta name="theme-color" content="#f5f5f7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f5f7; --card:#fff; --ink:#1d1d1f; --ink2:#6e6e73; --ink3:#a1a1a6; --line:#e5e5ea;
+  --blue:#0071e3; --blue-bg:#e8f1fc; --green:#1f9d55; --green-bg:#e6f6ec;
+  --amber:#b25e00; --amber-bg:#fff4e0; --red:#d70015; --red-bg:#fdecee; --grey-bg:#f2f2f4;
+  --r:18px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:24px 20px 64px}
+header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.eyebrow{font-size:13px;color:var(--ink2);font-weight:500;letter-spacing:.02em}
+h1{font-size:30px;line-height:1.2;margin:2px 0 0;font-weight:700;letter-spacing:-.01em}
+h2{font-size:18px;margin:0;font-weight:600}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);padding:8px 14px;border-radius:999px;cursor:pointer;font-size:14px;font-weight:500;transition:background .15s}
+.btn:hover{background:var(--grey-bg)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.primary:hover{background:#0062c4}
+.btn svg{width:16px;height:16px;flex:none}
+.grid{display:grid;gap:16px}
+.hero{grid-template-columns:1.2fr 1fr 1fr}
+@media(max-width:860px){.hero{grid-template-columns:1fr}}
+.card{background:var(--card);border-radius:var(--r);padding:20px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.muted{color:var(--ink2)}
+.small{font-size:13px}
+.big{font-size:44px;font-weight:700;line-height:1;letter-spacing:-.02em}
+.bar{height:8px;background:var(--grey-bg);border-radius:99px;overflow:hidden;margin:14px 0 8px}
+.bar>i{display:block;height:100%;background:var(--blue);border-radius:99px}
+.banner{display:none;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:14px;margin-bottom:16px;background:var(--red-bg);color:var(--red);font-weight:500}
+.banner.show{display:flex}
+.banner svg{width:20px;height:20px;flex:none;margin-top:2px}
+section{margin-top:16px}
+.two{grid-template-columns:1.25fr 1fr}
+@media(max-width:860px){.two{grid-template-columns:1fr}}
+/* task list */
+.list{display:flex;flex-direction:column}
+.item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.chk{appearance:none;width:22px;height:22px;border:2px solid var(--ink3);border-radius:50%;flex:none;cursor:pointer;margin-top:1px;display:grid;place-content:center;transition:all .15s}
+.chk:checked{background:var(--green);border-color:var(--green)}
+.chk:checked::after{content:"";width:6px;height:11px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.dot{width:22px;height:22px;flex:none;display:grid;place-content:center;margin-top:1px}
+.dot svg{width:18px;height:18px;color:var(--ink3)}
+.item .t{font-weight:500}
+.item.done .t{color:var(--ink3);text-decoration:line-through}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;align-items:center}
+.pill{font-size:12px;font-weight:500;padding:2px 9px;border-radius:99px;background:var(--grey-bg);color:var(--ink2);white-space:nowrap}
+.pill.red{background:var(--red-bg);color:var(--red)}
+.pill.blue{background:var(--blue-bg);color:var(--blue)}
+.pill.amber{background:var(--amber-bg);color:var(--amber)}
+.pill.green{background:var(--green-bg);color:var(--green)}
+.note{font-size:13px;color:var(--ink2);margin-top:3px}
+.empty{color:var(--ink3);padding:16px 0;text-align:center}
+/* score */
+.ring{position:relative;width:132px;height:132px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .c{position:absolute;inset:0;display:grid;place-content:center;text-align:center}
+.ring .c b{font-size:34px;line-height:1;font-weight:700}
+.scorehead{display:flex;gap:18px;align-items:center}
+.srow{display:grid;grid-template-columns:44px 1fr auto 52px;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.srow .k{font-weight:600;color:var(--ink2);font-size:13px}
+.srow .v{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.srow .v small{font-weight:400;color:var(--ink3)}
+.srow select,.srow input[type=number]{border:1px solid var(--line);border-radius:10px;padding:5px 8px;background:#fff;max-width:190px}
+.srow input[type=number]{width:84px}
+.sub{grid-column:2/5;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px}
+.sub label{display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.sub input{accent-color:var(--blue)}
+/* course matrix */
+.tablewrap{overflow-x:auto;margin:0 -20px;padding:0 20px}
+table{border-collapse:collapse;width:100%;min-width:860px;font-size:13px}
+th,td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line)}
+th{font-weight:500;color:var(--ink2);vertical-align:bottom;line-height:1.3}
+th.l,td.l{text-align:left}
+td.l b{display:block;font-size:14px}
+td input[type=checkbox]{width:18px;height:18px;accent-color:var(--green);cursor:pointer}
+th.od{background:var(--blue-bg);color:var(--blue)}
+.pct{font-weight:600;font-variant-numeric:tabular-nums}
+.x{border:0;background:none;color:var(--ink3);cursor:pointer;padding:4px}
+.x:hover{color:var(--red)}
+.addrow{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.addrow input{border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#fff}
+.addrow input:first-child{width:130px}
+.addrow input:nth-child(2){flex:1;min-width:180px}
+/* timeline */
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.seg{border:1px solid var(--line);background:#fff;border-radius:99px;padding:4px 12px;font-size:13px;cursor:pointer}
+.seg.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.month{margin-top:18px}
+.month h3{font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 4px;text-transform:none}
+.tl .item{padding:10px 0}
+.date{width:74px;flex:none;font-size:13px;color:var(--ink2);font-variant-numeric:tabular-nums;padding-top:2px}
+.today-line{display:flex;align-items:center;gap:8px;color:var(--red);font-size:12px;font-weight:600;margin:6px 0}
+.today-line::after{content:"";flex:1;height:1px;background:var(--red)}
+footer{margin-top:28px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;color:var(--ink2);font-size:13px}
+.grid>*{min-width:0}
+@media(max-width:560px){
+  .wrap{padding:18px 14px 56px} h1{font-size:25px} .card{padding:18px}
+  .tablewrap{margin:0 -18px;padding:0 18px}
+  .card-h{flex-wrap:wrap}
+  .srow{grid-template-columns:32px 1fr 56px;row-gap:6px}
+  .srow>.v{grid-column:3;grid-row:1}
+  .srow>span:nth-child(3){grid-column:2/4;grid-row:2}
+  .srow>span:nth-child(3):empty{display:none}
+  .sub{grid-column:2/4}
+  .scorehead{flex-direction:column;align-items:flex-start}
+  .date{width:56px}
+}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;font-size:14px;opacity:0;transition:all .25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow" id="todayLabel"></div>
+      <h1>แผนงานอาจารย์ · ปีงบ 2570</h1>
+    </div>
+    <div class="actions">
+      <button class="btn" id="btnNotify"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span>เปิดการแจ้งเตือน</span></button>
+      <button class="btn primary" id="btnIcs"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg>เพิ่มลงปฏิทิน (.ics)</button>
+    </div>
+  </header>
+
+  <div class="banner" id="banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></svg><div id="bannerText"></div></div>
+
+  <div class="grid hero">
+    <div class="card">
+      <div class="muted small">ภาคเรียนที่ 2/2569</div>
+      <div style="display:flex;align-items:baseline;gap:10px;margin-top:8px"><span class="big" id="semBig"></span><span class="muted" id="semUnit"></span></div>
+      <div class="bar"><i id="semBar"></i></div>
+      <div class="small muted" id="semNote"></div>
+    </div>
+    <div class="card">
+      <div class="muted small">กำหนดถัดไป</div>
+      <div style="display:flex;align-items:baseline;gap:10px;margin-top:8px"><span class="big" id="nextBig"></span><span class="muted" id="nextUnit"></span></div>
+      <div style="margin-top:12px;font-weight:500" id="nextTitle"></div>
+      <div class="small muted" id="nextDate"></div>
+    </div>
+    <div class="card">
+      <div class="muted small">งานในรายการ</div>
+      <div style="display:flex;align-items:baseline;gap:10px;margin-top:8px"><span class="big" id="doneBig"></span><span class="muted" id="doneUnit"></span></div>
+      <div class="bar"><i id="doneBar" style="background:var(--green)"></i></div>
+      <div class="small muted" id="doneNote"></div>
+    </div>
+  </div>
+
+  <section class="grid two">
+    <div class="card">
+      <div class="card-h"><h2>ต้องทำตอนนี้</h2><span class="small muted">อัปเดตตามวันที่อัตโนมัติ</span></div>
+      <div class="list" id="nowList"></div>
+    </div>
+    <div class="card">
+      <div class="card-h"><h2>คะแนนประเมิน</h2><span class="pill" id="gapPill"></span></div>
+      <div class="scorehead">
+        <div class="ring">
+          <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="#f2f2f4" stroke-width="12"/><circle id="ringArc" cx="60" cy="60" r="52" fill="none" stroke="#0071e3" stroke-width="12" stroke-linecap="round" stroke-dasharray="0 999"/><line id="ringMark" x1="60" y1="2" x2="60" y2="20" stroke="#1d1d1f" stroke-width="2.5"/></svg>
+          <div class="c"><b id="scoreTotal">0</b><span class="small muted">จาก 100</span></div>
+        </div>
+        <div class="small muted">คะแนนคาดการณ์จากสิ่งที่ติ๊กและกรอกไว้<br>เส้นดำบนวงคือเป้า <b style="color:var(--ink)">65 คะแนน</b><br>ข้อที่ยังไม่มีผลจริงจะใช้ค่าประมาณ (มี ~ นำหน้า)</div>
+      </div>
+      <div id="scoreRows" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-h"><h2>เอกสารประกอบการสอน + On demand รายวิชา</h2><span class="small muted">ข้อ 1.2 และ 1.4 ต้องครบทุกวิชา</span></div>
+    <div class="tablewrap"><table id="courseTable"></table></div>
+    <div class="addrow">
+      <input id="cCode" placeholder="รหัสวิชา เช่น GMD3203">
+      <input id="cName" placeholder="ชื่อวิชา / กลุ่มเรียน">
+      <button class="btn" id="cAdd"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>เพิ่มรายวิชา</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-h"><h2>ไทม์ไลน์ทั้งปี</h2>
+      <div class="filters" id="filters">
+        <button class="seg on" data-f="upcoming">ที่ยังมาไม่ถึง</button>
+        <button class="seg" data-f="all">ทั้งหมด</button>
+        <button class="seg" data-f="r1">รอบ 1</button>
+        <button class="seg" data-f="r2">รอบ 2</button>
+      </div>
+    </div>
+    <div class="tl" id="timeline"></div>
+  </section>
+
+  <footer>
+    <div>ข้อมูลการติ๊กเก็บไว้ในเบราว์เซอร์นี้ · ย้ายเครื่องใช้ปุ่มสำรอง/นำเข้า</div>
+    <div class="actions">
+      <button class="btn" id="btnExport">สำรองข้อมูล</button>
+      <label class="btn" style="cursor:pointer">นำเข้าข้อมูล<input type="file" id="fileImport" accept="application/json" hidden></label>
+    </div>
+  </footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ========= ข้อมูลกำหนดการ (แก้ไข/เพิ่มได้ที่นี่) =========
+   type: "task" = งานที่ต้องติ๊กเมื่อเสร็จ, "event" = วันสำคัญ (ผ่านไปเองตามวัน)
+   start/due: YYYY-MM-DD (ค.ศ.)  round: 1 หรือ 2  tag: ข้อประเมินที่เกี่ยวข้อง
+   ics:false = ไม่ส่งออกไปปฏิทิน */
+const ITEMS = [
+  {id:"load-2-69", type:"task", title:"เช็กตารางสอนเทอม 2/2569 ให้ได้ ≥12 ชม./สัปดาห์", start:"2026-11-24", due:"2026-11-30", round:1, tag:"1.1", note:"ถ้าไม่ถึง คุยหัวหน้าสาขาตอนนี้ — นักศึกษาเพิ่ม-ถอนได้ถึง 4 ม.ค."},
+  {id:"kit-week1", type:"task", title:"เตรียมชุดคาบแรกทุกวิชา: ปฐมนิเทศรายวิชา + Pre-test + แผนบริหารการสอนประจำวิชา", start:"2026-11-24", due:"2026-11-30", round:1, tag:"1.2", note:"Pre-test ต้องเก็บคาบแรก ย้อนหลังไม่ได้"},
+  {id:"evidence-folder", type:"task", title:"สร้างโฟลเดอร์หลักฐานแยกตามข้อประเมิน 1.1–6", start:"2026-11-24", due:"2026-11-30", round:1, tag:"ทั่วไป"},
+  {id:"roster", type:"task", title:"พิมพ์รายชื่อนักศึกษาจาก reg.ssru.ac.th", start:"2026-11-28", due:"2026-12-01", round:1, tag:"สอน"},
+  {id:"grant-check", type:"task", title:"เช็กสัญญาทุนวิจัยที่มีชื่อเป็นหัวหน้าโครงการ", start:"2026-11-24", due:"2026-12-31", round:1, tag:"2.1"},
+  {id:"open-2-69", type:"event", title:"เปิดภาคเรียน 2/2569 (ภาคปกติ)", start:"2026-12-01", round:1, tag:"สอน"},
+  {id:"open-2-69s", type:"event", title:"เปิดภาคเรียน ภาคพิเศษ (ส.-อา.)", start:"2026-12-06", round:1, tag:"สอน"},
+  {id:"pretest", type:"task", title:"ปฐมนิเทศรายวิชาและเก็บ Pre-test ครบทุกกลุ่ม", start:"2026-12-01", due:"2026-12-13", round:1, tag:"1.2"},
+  {id:"od-first", type:"task", title:"อัดคลิป On demand บทแรก ๆ ทุกวิชา", start:"2026-12-01", due:"2026-12-20", round:1, tag:"1.4"},
+  {id:"lessons", type:"task", title:"ทำแผนการสอนรายบท + เอกสารบรรยาย ล่วงหน้าบทละ 1 สัปดาห์", start:"2026-12-01", due:"2027-03-19", round:1, tag:"1.2", note:"งานต่อเนื่องทั้งเทอม", ics:false},
+  {id:"adddrop", type:"event", title:"วันสุดท้ายนักศึกษาลงทะเบียน/เพิ่ม-ถอนรายวิชา", start:"2027-01-04", round:1, tag:"1.1"},
+  {id:"od-submit", type:"task", title:"ส่งสื่อ On demand ให้กรรมการวิชาการคณะพิจารณา (ขึ้น DLP)", start:"2026-12-21", due:"2027-01-15", round:1, tag:"1.4"},
+  {id:"tep", type:"task", title:"สมัครและสอบ SSRU-TEP", start:"2027-01-05", due:"2027-02-28", round:1, tag:"5", note:"ดูรอบสอบกับสถาบันภาษา"},
+  {id:"midterm", type:"event", title:"สัปดาห์สอบกลางภาค", start:"2027-01-27", end:"2027-01-29", round:1, tag:"สอน"},
+  {id:"tci", type:"task", title:"เขียนบทความ TCI 1 เรื่อง (First / Corresponding author)", start:"2027-02-01", due:"2027-02-28", round:1, tag:"2.2"},
+  {id:"eval-remind", type:"task", title:"เตือนนักศึกษาประเมินอาจารย์ในคาบ (เปิด 1–31 มี.ค.)", start:"2027-03-01", due:"2027-03-31", round:1, tag:"1.5"},
+  {id:"igrade", type:"event", title:"วันสุดท้ายส่งแก้เกรด I ของเทอม 1/2569", start:"2027-03-04", round:1, tag:"สอน"},
+  {id:"posttest", type:"task", title:"ทำ Post-test คาบสุดท้ายทุกกลุ่ม", start:"2027-03-08", due:"2027-03-19", round:1, tag:"1.2"},
+  {id:"last-s", type:"event", title:"สอนวันสุดท้าย ภาคพิเศษ (ส.-อา.)", start:"2027-03-14", round:1, tag:"สอน"},
+  {id:"last", type:"event", title:"สอนวันสุดท้าย ภาคปกติ", start:"2027-03-19", round:1, tag:"สอน"},
+  {id:"makeup", type:"event", title:"ช่วงสอนชดเชย (พิเศษ 20–21 / ปกติ 22–26, 29 มี.ค.)", start:"2027-03-20", end:"2027-03-29", round:1, tag:"สอน"},
+  {id:"final-s", type:"event", title:"สอบปลายภาค ภาคพิเศษ", start:"2027-03-27", round:1, tag:"สอน"},
+  {id:"load-1-70", type:"task", title:"ล็อกตารางสอนเทอม 1/2570 ให้ได้ ≥12 ชม.", start:"2027-03-01", due:"2027-03-31", round:1, tag:"1.1", note:"คณะบันทึกตารางเรียนวันสุดท้าย 31 มี.ค."},
+  {id:"final", type:"event", title:"สอบปลายภาค ภาคปกติ", start:"2027-03-30", end:"2027-04-01", round:1, tag:"สอน"},
+  {id:"grades", type:"task", title:"ส่งเกรดและออกรายงานที่ reg.ssru.ac.th", start:"2027-04-01", due:"2027-04-08", round:1, tag:"สอน"},
+  {id:"close-2-69", type:"event", title:"ปิดภาคเรียน 2/2569", start:"2027-04-09", round:1, tag:"สอน"},
+  {id:"compile", type:"task", title:"รวมเล่มเอกสารประกอบการสอน: ปก คำนำ สารบัญ บรรณานุกรม", start:"2027-04-09", due:"2027-04-30", round:1, tag:"1.2"},
+  {id:"evidence-r1", type:"task", title:"รวบรวมหลักฐานรอบ 1 ส่งคณะ", start:"2027-04-01", due:"2027-04-30", round:1, tag:"ทั่วไป", note:"ตรวจวันส่งจริงกับคณะอีกครั้ง"},
+  {id:"prep-1-70", type:"task", title:"เตรียมเอกสาร 9 องค์ประกอบ + On demand ของวิชาเทอม 1/2570", start:"2027-05-01", due:"2027-07-11", round:2, tag:"1.2"},
+  {id:"act-31may", type:"event", title:"กิจกรรมบังคับ: บำเพ็ญกุศลวันคล้ายวันทิวงคต สมเด็จพระนางเจ้าสุนันทาฯ", start:"2027-05-31", round:2, tag:"4"},
+  {id:"act-queen", type:"event", title:"กิจกรรมบังคับ: พิธีถวายพระพรชัยมงคล สมเด็จพระนางเจ้าฯ พระบรมราชินี", start:"2027-06-03", round:2, tag:"4", note:"วันจัดจริงอาจขยับ ตรวจกับประกาศมหาวิทยาลัย"},
+  {id:"open-1-70", type:"event", title:"เปิดภาคเรียน 1/2570", start:"2027-07-12", round:2, tag:"สอน"},
+  {id:"act-king", type:"event", title:"กิจกรรมบังคับ: พิธีถวายพระพรชัยมงคล พระบาทสมเด็จพระเจ้าอยู่หัว", start:"2027-07-28", round:2, tag:"4", note:"วันจัดจริงอาจขยับ ตรวจกับประกาศมหาวิทยาลัย"},
+  {id:"evidence-r2", type:"task", title:"รวบรวมหลักฐานรอบ 2 ส่งคณะ", start:"2027-09-01", due:"2027-09-30", round:2, tag:"ทั่วไป"}
+];
+const SEM = {open:"2026-12-01", end:"2027-04-01"};
+const COMPONENTS = [
+  ["cover","ปก คำนำ สารบัญ"],["planC","แผนบริหาร<br>รายวิชา"],["planL","แผนบริหาร<br>รายบท"],["lesson","บทเรียน"],
+  ["biblio","บรรณานุกรม"],["slides","เอกสาร<br>บรรยาย"],["orient","ปฐมนิเทศ<br>รายวิชา"],["pre","Pre-test"],["post","Post-test"]
+];
+const OD = [["odUp","On demand<br>ขึ้น DLP"],["odOk","คณบดี<br>อนุมัติ"]];
+const ACTS = [["m1","ประชุมบุคลากร ครั้งที่ 1"],["m2","ประชุมบุคลากร ครั้งที่ 2"],["nov10","10 พ.ย. พิธีบวงสรวง"],["may31","31 พ.ค. บำเพ็ญกุศล"],["queen","ถวายพระพร พระราชินี"],["king","ถวายพระพร ในหลวง"]];
+
+/* ========= state ========= */
+const KEY = "plan2570.v1";
+const blank = {done:{}, courses:[], s:{load:"",book:false,eval:"",grant:{},pub1:"0",pub2:"0",service:"0",acts:{},tep:"",comp:""}, lastNotify:""};
+let S;
+try{ S = Object.assign(structuredClone(blank), JSON.parse(localStorage.getItem(KEY)||"{}")); S.s = Object.assign(structuredClone(blank.s), S.s||{}); }catch(e){ S = structuredClone(blank); }
+const save = ()=>{ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} };
+
+/* ========= date helpers ========= */
+const D = s => { const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); };
+const today0 = ()=>{ const n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); };
+const days = (a,b)=> Math.round((b-a)/864e5);
+const fmt = (s,o={day:"numeric",month:"short"}) => D(s).toLocaleDateString("th-TH",o);
+const fmtR = it => { const e = it.due||it.end; return e && e!==it.start ? `${fmt(it.start)} – ${fmt(e)}` : fmt(it.start); };
+const iso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function status(it,t){
+  const s=D(it.start), e=D(it.due||it.end||it.start);
+  if(it.type==="task" && S.done[it.id]) return "done";
+  if(t>e) return it.type==="task" ? "overdue" : "past";
+  if(t>=s) return "active";
+  if(days(t,s)<=14) return "soon";
+  return "later";
+}
+const STAT = {done:["green","เสร็จแล้ว"],overdue:["red","เลยกำหนด"],active:["blue","ช่วงนี้"],soon:["amber","ใกล้ถึง"],later:["","รอ"],past:["","ผ่านแล้ว"]};
+const calIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>';
+
+function itemHTML(it,t,withDate){
+  const st=status(it,t), [c,l]=STAT[st];
+  let when="";
+  const e=D(it.due||it.end||it.start);
+  if(st==="overdue") when=`<span class="pill red">เลยมา ${days(e,t)} วัน</span>`;
+  else if(st==="active" && it.type==="task"){ const n=days(t,e); when=`<span class="pill ${n<=3?"red":"blue"}">${n===0?"ครบกำหนดวันนี้":"เหลือ "+n+" วัน"}</span>`; }
+  else if(st==="active") when=`<span class="pill blue">วันนี้/ช่วงนี้</span>`;
+  else if(st==="soon"){ const n=days(t,D(it.start)); when=`<span class="pill amber">อีก ${n} วัน</span>`; }
+  else if(st==="done") when=`<span class="pill green">เสร็จแล้ว</span>`;
+  const lead = it.type==="task" ? `<input type="checkbox" class="chk" data-id="${it.id}" ${S.done[it.id]?"checked":""} aria-label="เสร็จแล้ว">` : `<span class="dot">${calIcon}</span>`;
+  return `<div class="item ${st==="done"?"done":""}">${withDate?`<div class="date">${fmt(it.start)}</div>`:""}${lead}<div style="flex:1;min-width:0"><div class="t">${esc(it.title)}</div><div class="meta">${when}<span class="pill">${fmtR(it)}</span><span class="pill">ข้อ ${esc(it.tag)}</span></div>${it.note?`<div class="note">${esc(it.note)}</div>`:""}</div></div>`;
+}
+
+/* ========= render ========= */
+let filter="upcoming";
+function render(){
+  const t=today0(), tIso=iso(t);
+  document.getElementById("todayLabel").textContent = t.toLocaleDateString("th-TH",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+
+  // semester
+  const o=D(SEM.open), en=D(SEM.end);
+  if(t<o){ setTxt("semBig",days(t,o)); setTxt("semUnit","วันก่อนเปิดเทอม"); bar("semBar",0); setTxt("semNote",`เปิดเรียน ${fmt(SEM.open,{day:"numeric",month:"long"})} · สอบปลายภาค ${fmt("2027-03-30")} – ${fmt(SEM.end)}`); }
+  else if(t<=en){ const wk=Math.floor(days(o,t)/7)+1, tot=Math.ceil(days(o,en)/7); setTxt("semBig",wk); setTxt("semUnit",`สัปดาห์ จาก ${tot}`); bar("semBar",days(o,t)/days(o,en)*100); setTxt("semNote",`เหลืออีก ${days(t,en)} วันถึงวันสอบปลายภาควันสุดท้าย`); }
+  else { setTxt("semBig","จบ"); setTxt("semUnit","ภาคเรียนสิ้นสุดแล้ว"); bar("semBar",100); setTxt("semNote","ส่งเกรด 8 เม.ย. · ปิดภาค 9 เม.ย. 2570"); }
+
+  // next deadline (task not done or event) from today
+  const upcoming = ITEMS.filter(it=>!(it.type==="task"&&S.done[it.id])).map(it=>({it,d:D(it.type==="task"?it.due:it.start)})).filter(x=>x.d>=t).sort((a,b)=>a.d-b.d);
+  if(upcoming.length){ const n=upcoming[0]; const dd=days(t,n.d); setTxt("nextBig",dd===0?"วันนี้":dd); setTxt("nextUnit",dd===0?"":"วัน"); setTxt("nextTitle",n.it.title); setTxt("nextDate",(n.it.type==="task"?"ครบกำหนด ":"")+fmt(iso(n.d),{weekday:"short",day:"numeric",month:"long"})); }
+  else { setTxt("nextBig","—"); setTxt("nextUnit",""); setTxt("nextTitle","ไม่มีกำหนดค้าง"); setTxt("nextDate",""); }
+
+  // tasks done
+  const tasks=ITEMS.filter(i=>i.type==="task"), dn=tasks.filter(i=>S.done[i.id]).length;
+  setTxt("doneBig",dn); setTxt("doneUnit",`จาก ${tasks.length} งาน`); bar("doneBar",dn/tasks.length*100);
+  const od=tasks.filter(i=>status(i,t)==="overdue").length;
+  setTxt("doneNote", od?`มี ${od} งานเลยกำหนด`:"ไม่มีงานเลยกำหนด");
+
+  // now list
+  const now = ITEMS.filter(it=>{ const st=status(it,t); return st==="overdue"||(st==="active")||(st==="soon"&&days(t,D(it.start))<=10); })
+    .sort((a,b)=>{ const r={overdue:0,active:1,soon:2}; return (r[status(a,t)]-r[status(b,t)]) || (D(a.due||a.end||a.start)-D(b.due||b.end||b.start)); });
+  const doneRecent = ITEMS.filter(it=>it.type==="task"&&S.done[it.id]&&D(it.due)>=t&&D(it.start)<=t);
+  document.getElementById("nowList").innerHTML = (now.length? now.map(i=>itemHTML(i,t)).join("") : `<div class="empty">ไม่มีงานเร่งด่วน</div>`) + doneRecent.map(i=>itemHTML(i,t)).join("");
+
+  // banner
+  const urgent = ITEMS.filter(it=>it.type==="task"&&!S.done[it.id]&&(status(it,t)==="overdue"||(status(it,t)==="active"&&days(t,D(it.due))<=3)));
+  const bn=document.getElementById("banner");
+  if(urgent.length){ bn.classList.add("show"); document.getElementById("bannerText").innerHTML = `<div>ต้องรีบ ${urgent.length} งาน</div><div class="small" style="font-weight:400">${urgent.map(u=>esc(u.title)).join(" · ")}</div>`; }
+  else bn.classList.remove("show");
+
+  renderTimeline(t); renderCourses(); renderScore();
+}
+function setTxt(id,v){ document.getElementById(id).textContent=v; }
+function bar(id,p){ document.getElementById(id).style.width=Math.max(0,Math.min(100,p))+"%"; }
+
+function renderTimeline(t){
+  let list=[...ITEMS].sort((a,b)=>D(a.start)-D(b.start));
+  if(filter==="upcoming") list=list.filter(it=>!["past","done"].includes(status(it,t)));
+  if(filter==="r1") list=list.filter(it=>it.round===1);
+  if(filter==="r2") list=list.filter(it=>it.round===2);
+  let html="", cur="", placedToday=false;
+  for(const it of list){
+    const m=fmt(it.start,{month:"long",year:"numeric"});
+    if(m!==cur){ html+=(cur?"</div>":"")+`<div class="month"><h3>${m}</h3>`; cur=m; }
+    if(!placedToday && D(it.start)>t){ html+=`<div class="today-line">วันนี้</div>`; placedToday=true; }
+    html+=itemHTML(it,t,true);
+  }
+  html+= cur?"</div>":`<div class="empty">ไม่มีรายการ</div>`;
+  document.getElementById("timeline").innerHTML=html;
+}
+
+function renderCourses(){
+  const tb=document.getElementById("courseTable");
+  let h=`<tr><th class="l">รายวิชา</th>${COMPONENTS.map(c=>`<th>${c[1]}</th>`).join("")}${OD.map(c=>`<th class="od">${c[1]}</th>`).join("")}<th>ครบ</th><th></th></tr>`;
+  if(!S.courses.length) h+=`<tr><td colspan="${COMPONENTS.length+OD.length+3}" class="empty">ยังไม่มีรายวิชา — เพิ่มวิชาที่สอนเทอมนี้ด้านล่าง</td></tr>`;
+  for(const c of S.courses){
+    const all=[...COMPONENTS,...OD], n=all.filter(k=>c.c[k[0]]).length;
+    h+=`<tr><td class="l"><b>${esc(c.code)}</b><span class="muted">${esc(c.name||"")}</span></td>${all.map(k=>`<td><input type="checkbox" data-c="${c.id}" data-k="${k[0]}" ${c.c[k[0]]?"checked":""}></td>`).join("")}<td class="pct" style="color:${n===all.length?"var(--green)":"var(--ink2)"}">${Math.round(n/all.length*100)}%</td><td><button class="x" data-del="${c.id}" title="ลบวิชา">✕</button></td></tr>`;
+  }
+  tb.innerHTML=h;
+}
+
+/* ========= score ========= */
+const PUB = [["0","—"],["12","Scopus Top 10% (12)"],["11","Scopus Q1 (11)"],["10","Scopus Q2 (10)"],["9","Scopus Q3 (9)"],["8","Scopus Q4 (8)"],["7","วารสารตามประกาศ กพอ. (7)"],["5","TCI กลุ่ม 1 (5)"],["5p","Proceedings ใน Scopus (5)"],["3","TCI กลุ่ม 2 (3)"],["5a","งานสร้างสรรค์ รางวัลชาติ 1 ผลงาน (5)"],["7a","รางวัลชาติ ≥2 / นานาชาติ (7)"],["5b","อนุสิทธิบัตร (5)"],["7b","สิทธิบัตร (7)"]];
+const LOAD = [["","—"],["10","≥12 ชม. (10)"],["8","9–11 ชม. (8)"],["6","6–8 ชม. (6)"],["4","3–5 ชม. (4)"],["2","น้อยกว่า 3 ชม. (2)"]];
+const SERV = [["0","—"],["10","≥25,000 บาท (10)"],["8","20,000–24,999 (8)"],["6","15,000–19,999 (6)"],["4","10,000–14,999 (4)"],["2","5,000–9,999 (2)"]];
+const num = v => parseInt(String(v),10)||0;
+function calcScore(){
+  const s=S.s, cs=S.courses;
+  const allDocs = cs.length && cs.every(c=>COMPONENTS.every(k=>c.c[k[0]]));
+  const allOD = cs.length && cs.every(c=>OD.every(k=>c.c[k[0]]));
+  const ev=parseFloat(s.eval);
+  const evalPts = isNaN(ev)?null: ev>=4.51?5: ev>=4.01?4: ev>=3.51?3: ev>=3.01?2: 1;
+  const grant = Math.min(8,(s.grant.ext?8:0)+(s.grant.uni?6:0)+(s.grant.own?4:0));
+  const pub = Math.min(12, num(s.pub1)+num(s.pub2));
+  const acts = Math.min(5, ACTS.filter(a=>s.acts[a[0]]).length);
+  const tep = s.tep===""?null:Math.min(10,Math.ceil(num(s.tep)/10));
+  const comp = s.comp===""?null:Math.min(10,parseFloat(s.comp)||0);
+  return [
+    {k:"1.1",n:"ภาระงานสอน",v:num(s.load),max:10,ctl:sel("load",LOAD)},
+    {k:"1.2",n:"เอกสารประกอบการสอน",v:allDocs?10:0,max:10,ctl:`<span class="small muted">${cs.length?(allDocs?"ครบทุกวิชา":"ยังไม่ครบทุกวิชา"):"เพิ่มรายวิชาก่อน"}</span>`},
+    {k:"1.3",n:"หนังสือ/ตำรา (ISBN)",v:s.book?10:0,max:10,ctl:`<label class="small"><input type="checkbox" data-s="book" ${s.book?"checked":""}> เผยแพร่แล้ว</label>`},
+    {k:"1.4",n:"สื่อ On demand",v:allOD?10:0,max:10,ctl:`<span class="small muted">${cs.length?(allOD?"ครบ + อนุมัติแล้ว":"ยังไม่ครบทุกวิชา"):"เพิ่มรายวิชาก่อน"}</span>`},
+    {k:"1.5",n:"ผลประเมินจากนักศึกษา",v:evalPts??4,est:evalPts===null,max:5,ctl:`<input type="number" step="0.01" min="0" max="5" placeholder="ค่าเฉลี่ย" data-s="eval" value="${esc(s.eval)}">`},
+    {k:"2.1",n:"แหล่งทุนวิจัย (หัวหน้าโครงการ)",v:grant,max:8,ctl:"",sub:`<label><input type="checkbox" data-g="ext" ${s.grant.ext?"checked":""}> ภายนอก/PMU (8)</label><label><input type="checkbox" data-g="uni" ${s.grant.uni?"checked":""}> มหาวิทยาลัย (6)</label><label><input type="checkbox" data-g="own" ${s.grant.own?"checked":""}> ทุนส่วนตัว (4)</label>`},
+    {k:"2.2",n:"เผยแพร่ผลงาน",v:pub,max:12,ctl:"",sub:sel("pub1",PUB)+sel("pub2",PUB)},
+    {k:"3",n:"บริการวิชาการ (รายได้)",v:num(s.service),max:10,ctl:sel("service",SERV)},
+    {k:"4",n:"ร่วมกิจกรรมบังคับ",v:acts,max:5,ctl:"",sub:ACTS.map(a=>`<label><input type="checkbox" data-a="${a[0]}" ${s.acts[a[0]]?"checked":""}> ${a[1]}</label>`).join("")},
+    {k:"5",n:"ภาษาอังกฤษ SSRU-TEP",v:tep??0,max:10,ctl:`<input type="number" min="0" max="100" placeholder="คะแนนสอบ" data-s="tep" value="${esc(s.tep)}">`},
+    {k:"6",n:"สมรรถนะ",v:comp??9,est:comp===null,max:10,ctl:`<input type="number" step="0.5" min="0" max="10" placeholder="ผลจริง" data-s="comp" value="${esc(s.comp)}">`}
+  ];
+}
+function sel(key,opts){ const v=S.s[key]; return `<select data-s="${key}">${opts.map(o=>`<option value="${o[0]}" ${String(v)===o[0]?"selected":""}>${o[1]}</option>`).join("")}</select>`; }
+function renderScore(){
+  const rows=calcScore(), total=rows.reduce((a,r)=>a+r.v,0);
+  setTxt("scoreTotal", Math.round(total*10)/10);
+  const C=2*Math.PI*52; document.getElementById("ringArc").setAttribute("stroke-dasharray",`${C*Math.min(total,100)/100} ${C}`);
+  document.getElementById("ringArc").setAttribute("stroke", total>=65?"#1f9d55":"#0071e3");
+  const ang=0.65*2*Math.PI; const mk=document.getElementById("ringMark");
+  const x1=60+44*Math.cos(ang), y1=60+44*Math.sin(ang), x2=60+60*Math.cos(ang), y2=60+60*Math.sin(ang);
+  mk.setAttribute("x1",x1);mk.setAttribute("y1",y1);mk.setAttribute("x2",x2);mk.setAttribute("y2",y2);
+  const gp=document.getElementById("gapPill");
+  if(total>=65){ gp.className="pill green"; gp.textContent="ถึงเป้า 65 แล้ว"; } else { gp.className="pill amber"; gp.textContent=`ขาดอีก ${Math.round((65-total)*10)/10} คะแนน`; }
+  document.getElementById("scoreRows").innerHTML = rows.map(r=>`<div class="srow"><span class="k">${r.k}</span><span>${r.n}</span><span>${r.ctl}</span><span class="v">${r.est?"~":""}${r.v}<small>/${r.max}</small></span>${r.sub?`<div class="sub">${r.sub}</div>`:""}</div>`).join("");
+}
+
+/* ========= events ========= */
+document.addEventListener("change",e=>{
+  const el=e.target;
+  if(el.dataset.id){ S.done[el.dataset.id]=el.checked; if(!el.checked) delete S.done[el.dataset.id]; }
+  else if(el.dataset.c){ const c=S.courses.find(x=>x.id===el.dataset.c); c.c[el.dataset.k]=el.checked; }
+  else if(el.dataset.s){ S.s[el.dataset.s]= el.type==="checkbox"?el.checked:el.value; }
+  else if(el.dataset.g){ S.s.grant[el.dataset.g]=el.checked; }
+  else if(el.dataset.a){ S.s.acts[el.dataset.a]=el.checked; }
+  else return;
+  save(); render();
+});
+document.addEventListener("click",e=>{
+  const d=e.target.closest("[data-del]");
+  if(d){ const c=S.courses.find(x=>x.id===d.dataset.del); if(c && confirmDel(c)){ S.courses=S.courses.filter(x=>x!==c); save(); render(); } }
+  const f=e.target.closest(".seg");
+  if(f){ filter=f.dataset.f; document.querySelectorAll(".seg").forEach(b=>b.classList.toggle("on",b===f)); renderTimeline(today0()); }
+});
+function confirmDel(c){ try{ return confirm(`ลบวิชา ${c.code}?`); }catch(e){ return true; } }
+document.getElementById("cAdd").onclick=()=>{
+  const code=document.getElementById("cCode").value.trim(), name=document.getElementById("cName").value.trim();
+  if(!code) return toast("ใส่รหัสวิชาก่อน");
+  S.courses.push({id:Date.now().toString(36),code,name,c:{}}); save(); render();
+  document.getElementById("cCode").value=""; document.getElementById("cName").value="";
+};
+document.getElementById("cName").addEventListener("keydown",e=>{ if(e.key==="Enter") document.getElementById("cAdd").click(); });
+
+/* ========= reminders ========= */
+function digest(){
+  const t=today0();
+  const list=ITEMS.filter(it=>{ if(it.type==="task"&&S.done[it.id]) return false; const st=status(it,t);
+    if(st==="overdue") return true;
+    if(it.type==="task"&&st==="active"&&days(t,D(it.due))<=3) return true;
+    const sd=days(t,D(it.start)); return it.type==="event"&&sd>=0&&sd<=2; });
+  return list;
+}
+function maybeNotify(force){
+  if(!("Notification" in window) || Notification.permission!=="granted") return;
+  const t=iso(today0()); if(!force && S.lastNotify===t) return;
+  const l=digest(); if(!l.length && !force) return;
+  try{ new Notification("แผนงานวันนี้", {body: l.length? l.slice(0,4).map(i=>"• "+i.title).join("\n") : "ไม่มีงานเร่งด่วน"}); }catch(e){}
+  S.lastNotify=t; save();
+}
+const btnN=document.getElementById("btnNotify");
+function syncNotifyBtn(){
+  if(!("Notification" in window)){ btnN.style.display="none"; return; }
+  btnN.querySelector("span").textContent = Notification.permission==="granted" ? "แจ้งเตือนเปิดอยู่" : "เปิดการแจ้งเตือน";
+}
+btnN.onclick=async()=>{
+  if(!("Notification" in window)) return;
+  const p = await Notification.requestPermission(); syncNotifyBtn();
+  if(p==="granted"){ maybeNotify(true); toast("จะเตือนเมื่อเปิดหน้านี้ — ถ้าอยากให้เตือนบนมือถือ ใช้ปุ่มเพิ่มลงปฏิทิน"); }
+  else toast("เบราว์เซอร์ไม่อนุญาตการแจ้งเตือน");
+};
+
+/* ========= .ics export ========= */
+document.getElementById("btnIcs").onclick=()=>{
+  const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+/,"");
+  const dt=s=>s.replace(/-/g,"");
+  const plus1=s=>{ const d=D(s); d.setDate(d.getDate()+1); return dt(iso(d)); };
+  const fold=s=>s.replace(/([,;\\])/g,"\\$1").replace(/\n/g,"\\n");
+  let out=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//plan2570//TH","CALSCALE:GREGORIAN","X-WR-CALNAME:แผนงานอาจารย์ ปีงบ 2570"];
+  for(const it of ITEMS){
+    if(it.ics===false) continue;
+    if(it.type==="task" && S.done[it.id]) continue;
+    const isTask=it.type==="task";
+    const s=isTask?it.due:it.start, e=isTask?it.due:(it.end||it.start);
+    const desc=[isTask?`ช่วงทำงาน ${fmtR(it)}`:"", `ข้อประเมิน ${it.tag}`, it.note||""].filter(Boolean).join("\n");
+    out.push("BEGIN:VEVENT",`UID:${it.id}@plan2570`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${dt(s)}`,`DTEND;VALUE=DATE:${plus1(e)}`,
+      `SUMMARY:${fold((isTask?"กำหนดส่ง: ":"")+it.title)}`,`DESCRIPTION:${fold(desc)}`,
+      "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${fold(it.title)}`,"TRIGGER:-PT16H","END:VALARM");
+    if(isTask) out.push("BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${fold(it.title)}`,"TRIGGER:-P6DT16H","END:VALARM");
+    out.push("END:VEVENT");
+  }
+  out.push("END:VCALENDAR");
+  const blob=new Blob([out.join("\r\n")],{type:"text/calendar;charset=utf-8"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="plan-2570.ics"; a.click();
+  toast("ดาวน์โหลดแล้ว — เปิดไฟล์เพื่อนำเข้าปฏิทิน");
+};
+
+/* ========= backup ========= */
+document.getElementById("btnExport").onclick=()=>{
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:"application/json"}));
+  a.download=`plan2570-backup-${iso(today0())}.json`; a.click();
+};
+document.getElementById("fileImport").onchange=async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  try{ const d=JSON.parse(await f.text()); S=Object.assign(structuredClone(blank),d); S.s=Object.assign(structuredClone(blank.s),d.s||{}); save(); render(); toast("นำเข้าข้อมูลแล้ว"); }
+  catch(err){ toast("ไฟล์ไม่ถูกต้อง"); }
+  e.target.value="";
+};
+
+function toast(m){ const t=document.getElementById("toast"); t.textContent=m; t.classList.add("show"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("show"),2800); }
+
+/* ========= auto refresh ========= */
+let lastDay=iso(today0());
+setInterval(()=>{ const d=iso(today0()); if(d!==lastDay){ lastDay=d; render(); maybeNotify(); } },60*1000);
+document.addEventListener("visibilitychange",()=>{ if(!document.hidden){ render(); maybeNotify(); } });
+syncNotifyBtn(); render(); maybeNotify();
+</script>
+</body>
+</html>
